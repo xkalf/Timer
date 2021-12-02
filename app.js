@@ -1,8 +1,9 @@
-const timer = document.querySelector("p"),
+const timer = document.querySelector("#timer"),
   tbody = document.querySelector("tbody"),
   table = document.querySelector("table"),
   h1 = document.querySelector("h1"),
-  clearBtn = document.querySelector(".clear");
+  clearBtn = document.querySelector("#clear"),
+  container = document.querySelector(".container");
 
 let milSec = 0,
   seconds = 0,
@@ -158,7 +159,6 @@ function startTimer() {
 
 function stopTimer() {
   addTime(saveTime);
-  console.log(saveTime);
   getScramble();
   clearInterval(interval);
   localStorage.setItem("timeArr", JSON.stringify(timeArr));
