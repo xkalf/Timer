@@ -171,7 +171,6 @@ window.addEventListener("keyup", (event) => {
       startTimer();
       running = true;
     } else {
-      stopTimer();
       running = false;
     }
   }
@@ -183,6 +182,7 @@ window.addEventListener("keydown", (event) => {
       timer.style.color = "green";
     } else {
       timer.style.color = "black";
+      if (!event.repeat) stopTimer();
     }
   }
 });
