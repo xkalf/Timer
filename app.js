@@ -155,35 +155,38 @@ function startTimer() {
       }
     }
   }, 10);
+  running = true;
 }
 
 function stopTimer() {
+  clearInterval(interval);
+  clearBtn.blur();
   addTime(saveTime);
   getScramble();
-  clearInterval(interval);
   localStorage.setItem("timeArr", JSON.stringify(timeArr));
 }
 
-window.addEventListener("keyup", (event) => {
-  timer.style.color = "black";
-  if (event.code == "Space") {
+window.addEventListener("keydown", (event) => {
+  if (running === true) {
+    if (!event.repeat) {
+      stopTimer();
+    }
+  }
+  if (event.code === "Space") {
     if (running === false) {
-      startTimer();
-      running = true;
+      timer.style.color = "green";
     } else {
-      running = false;
+      timer.style.color = "black";
     }
   }
 });
 
-window.addEventListener("keydown", (event) => {
-  if (event.code == "Space") {
-    if (running == false) {
-      timer.style.color = "green";
-    } else {
-      timer.style.color = "black";
-      if (!event.repeat) stopTimer();
-    }
+window.addEventListener("keyup", (event) => {
+  timer.style.color = "black";
+  if (running === true) {
+    running = false;
+  } else if (event.code == "Space") {
+    startTimer();
   }
 });
 

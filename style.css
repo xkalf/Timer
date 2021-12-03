@@ -10,9 +10,8 @@ div {
 div > p {
   font-size: 10rem;
   flex: 0.7;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  position: absolute;
+  left: 50%;
 }
 
 div > table {
@@ -28,12 +27,4 @@ tbody {
 
 h1 {
   text-align: center;
-}
-
-span {
-  padding: 0.3rem;
-  background-color: #333;
-  color: white;
-  border-radius: 10px;
-  margin-bottom: 10px;
 }
