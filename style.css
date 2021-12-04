@@ -8,7 +8,7 @@ div {
 }
 
 div > p {
-  font-size: 10rem;
+  font-size: 9rem;
   flex: 0.7;
   position: absolute;
   left: 50%;
@@ -27,4 +27,13 @@ tbody {
 
 h1 {
   text-align: center;
+  font-size: 2.5rem;
+}
+
+.hide {
+  display: none;
+}
+
+button {
+  font-size: 2rem;
 }

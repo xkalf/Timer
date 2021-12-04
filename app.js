@@ -9,7 +9,8 @@ let milSec = 0,
   seconds = 0,
   minutes = 0,
   numberOfSolves = 0,
-  saveTime = 0;
+  saveTime = 0,
+  keyPressed = 0;
 let timeArr = [];
 let running = false;
 
@@ -125,6 +126,9 @@ var cstimerScrambler = (function () {
 })();
 
 function startTimer() {
+  table.classList.add("hide");
+  clearBtn.classList.add("hide");
+  h1.classList.add("hide");
   saveTime = 0;
   milSec = 0;
   seconds = 0;
@@ -159,6 +163,9 @@ function startTimer() {
 }
 
 function stopTimer() {
+  h1.classList.remove("hide");
+  table.classList.remove("hide");
+  clearBtn.classList.remove("hide");
   clearInterval(interval);
   clearBtn.blur();
   addTime(saveTime);
@@ -167,7 +174,8 @@ function stopTimer() {
 }
 
 window.addEventListener("keydown", (event) => {
-  if (running === true) {
+  keyPressed++;
+  if (running === true && keyPressed === 1) {
     if (!event.repeat) {
       stopTimer();
     }
@@ -188,12 +196,31 @@ window.addEventListener("keyup", (event) => {
   } else if (event.code == "Space") {
     startTimer();
   }
+  keyPressed = 0;
+});
+
+window.addEventListener("touchstart", (event) => {
+  if (running === false) {
+    timer.style.color = "green";
+  } else {
+    timer.style.color = "black";
+    stopTimer();
+  }
+});
+
+window.addEventListener("touchend", (event) => {
+  timer.style.color = "black";
+  if (running === true) {
+    running = false;
+  } else {
+    startTimer();
+  }
 });
 
 const getScramble = () => {
-  cstimerScrambler.getScramble(["333"], (scramble) => {
-    // let text = scramble.replaceAll("\\n", "<br>");
-    h1.innerHTML = scramble;
+  cstimerScrambler.getScramble(["mgmp", 70], (scramble) => {
+    let text = scramble.replaceAll("\\n", "<br>");
+    h1.innerHTML = text;
   });
 };
 
