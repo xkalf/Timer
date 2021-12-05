@@ -3,7 +3,8 @@ const timer = document.querySelector("#timer"),
   table = document.querySelector("table"),
   h1 = document.querySelector("h1"),
   clearBtn = document.querySelector("#clear"),
-  deleteBtn = document.querySelector("#delete");
+  deleteBtn = document.querySelector("#delete"),
+  select = document.querySelector("#types");
 
 let milSec = 0,
   seconds = 0,
@@ -13,6 +14,7 @@ let milSec = 0,
   keyPressed = 0;
 let timeArr = [];
 let running = false;
+let type = ["333"];
 
 const addTime = (timeText) => {
   timeArr.unshift(timeText);
@@ -129,6 +131,8 @@ function startTimer() {
   table.classList.add("hide");
   clearBtn.classList.add("hide");
   h1.classList.add("hide");
+  deleteBtn.classList.add("hide");
+  select.classList.add("hide");
   saveTime = 0;
   milSec = 0;
   seconds = 0;
@@ -166,6 +170,8 @@ function stopTimer() {
   h1.classList.remove("hide");
   table.classList.remove("hide");
   clearBtn.classList.remove("hide");
+  deleteBtn.classList.remove("hide");
+  select.classList.remove("hide");
   clearInterval(interval);
   clearBtn.blur();
   addTime(saveTime);
@@ -218,7 +224,7 @@ window.addEventListener("touchend", (event) => {
 });
 
 const getScramble = () => {
-  cstimerScrambler.getScramble(["mgmp", 70], (scramble) => {
+  cstimerScrambler.getScramble(type, (scramble) => {
     let text = scramble.replaceAll("\\n", "<br>");
     h1.innerHTML = text;
   });
@@ -238,6 +244,37 @@ clearBtn.addEventListener("click", resetTime);
 //   localStorage.setItem("timeArr", timeArr);
 //   tbody.lastElementChild.removeChild();
 // });
+
+select.addEventListener("change", () => {
+  switch (select.value) {
+    case "22":
+      type = ["222so"];
+      break;
+    case "33":
+      type = ["333"];
+      break;
+    case "44":
+      type = ["444wca"];
+      break;
+    case "55":
+      type = ["555wca", 60];
+      break;
+    case "66":
+      type = ["666wca", 60];
+      break;
+    case "77":
+      type = ["777wca", 60];
+      break;
+    case "mega":
+      type = ["mgmp", 70];
+      break;
+    case "pyra":
+      type = ["pyrso"];
+      break;
+  }
+  getScramble();
+  select.blur();
+});
 
 const existingTimes = JSON.parse(localStorage.getItem("timeArr"));
 let timeData = existingTimes || [];
