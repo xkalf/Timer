@@ -3,7 +3,7 @@ const timer = document.querySelector("#timer"),
   table = document.querySelector("table"),
   h1 = document.querySelector("h1"),
   clearBtn = document.querySelector("#clear"),
-  container = document.querySelector(".container");
+  deleteBtn = document.querySelector("#delete");
 
 let milSec = 0,
   seconds = 0,
@@ -231,9 +231,13 @@ const resetTime = () => {
   localStorage.clear();
 };
 
-clearBtn.addEventListener("click", () => {
-  resetTime();
-});
+clearBtn.addEventListener("click", resetTime);
+
+// deleteBtn.addEventListener("click", () => {
+//   timeArr.shift();
+//   localStorage.setItem("timeArr", timeArr);
+//   tbody.lastElementChild.removeChild();
+// });
 
 const existingTimes = JSON.parse(localStorage.getItem("timeArr"));
 let timeData = existingTimes || [];
