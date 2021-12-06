@@ -193,6 +193,11 @@ window.addEventListener("keydown", (event) => {
       timer.style.color = "black";
     }
   }
+  if (event.altKey && event.code === "KeyZ") {
+    deleteLast();
+  } else if (event.altKey && event.code === "KeyD") {
+    resetTime();
+  }
 });
 
 window.addEventListener("keyup", (event) => {
@@ -239,11 +244,17 @@ const resetTime = () => {
 
 clearBtn.addEventListener("click", resetTime);
 
-// deleteBtn.addEventListener("click", () => {
-//   timeArr.shift();
-//   localStorage.setItem("timeArr", timeArr);
-//   tbody.lastElementChild.removeChild();
-// });
+function deleteLast() {
+  deleteBtn.blur();
+  let timeArr2 = timeArr;
+  resetTime();
+  timeArr2.shift();
+  localStorage.setItem("timeArr", JSON.stringify(timeArr2));
+  timeArr2.reverse();
+  timeArr2.forEach((t) => addTime(t));
+}
+
+deleteBtn.addEventListener("click", deleteLast);
 
 select.addEventListener("change", () => {
   switch (select.value) {
