@@ -16,116 +16,82 @@ let timeArr = [];
 let running = false;
 let type = ["333"];
 
-const addTime = (timeText) => {
-  timeArr.unshift(timeText);
-  numberOfSolves++;
-  let current = tbody.innerHTML;
-  tbody.innerHTML = "";
-  tbody.innerHTML += milSecondsToString(timeText, numberOfSolves) + current;
-};
+main();
 
-const milSecondsToString = (timeText, len) => {
-  const times = milSecondsToArray(timeText);
-  const ao5 = milSecondsToArray(getAvg(timeArr, 5));
-  const ao12 = milSecondsToArray(getAvg(timeArr, 12));
-  if (len < 5) {
-    return `
-      <tr>
-        <td>${len}</td>
-        <td>${times[2]}${times[1]}.${times[0]}</td>
-        <td>-</td>
-        <td>-</td>
-      </tr>
-    `;
-  } else if (len < 12) {
-    return `
-      <tr>
-        <td>${len}</td>
-        <td>${times[2]}${times[1]}.${times[0]}</td>
-        <td>${ao5[2]}${ao5[1]}.${ao5[0]}</td>
-        <td>-</td>
-      </tr>
-    `;
-  } else {
-    return `
-      <tr>
-        <td>${len}</td>
-        <td>${times[2]}${times[1]}.${times[0]}</td>
-        <td>${ao5[2]}${ao5[1]}.${ao5[0]}</td>
-        <td>${ao12[2]}${ao12[1]}.${ao12[0]}</td>
-      </tr>
-    `;
+function main() {
+  const existingTimes = JSON.parse(localStorage.getItem("timeArr"));
+  let timeData = existingTimes || [];
+  timeData.forEach((t) => addTime(t));
+  // getScramble();
+
+  window.addEventListener("keydown", handleKeyDown);
+  window.addEventListener("keyup", handleKeyUp);
+  clearBtn.addEventListener("click", resetTime);
+  deleteBtn.addEventListener("click", deleteLast);
+  select.addEventListener("change", handleSelectChange);
+}
+
+function handleKeyUp(event) {
+  timer.style.color = "black";
+  if (running === true) {
+    running = false;
+  } else if (event.code == "Space") {
+    startTimer();
   }
-};
+  keyPressed = 0;
+}
 
-const milSecondsToArray = (input) => {
-  let tableMilSec = input % 100;
-  let tableSec = Math.floor((input % 6000) / 100);
-  let tableMin = Math.floor(input / 6000);
-
-  let tableMilSecDisplay = tableMilSec < 10 ? "0" + tableMilSec : tableMilSec;
-  let tableSecDisplay =
-    tableMin > 0 && tableSec < 10 ? "0" + tableSec : tableSec;
-  let tableMinDisplay = tableMin > 0 ? tableMin + ":" : "";
-  return [tableMilSecDisplay, tableSecDisplay, tableMinDisplay];
-};
-
-const getTime = () => {
-  timeArr.forEach((t) => {
-    numberOfSolves++;
-    tbody.innerHTML += milSecondsToString(t, numberOfSolves);
-  });
-};
-
-const getAvg = (arr, number) => {
-  let newArr = [];
-  for (let i = 0; i < number; i++) {
-    newArr.push(arr[i]);
+function handleKeyDown(event) {
+  keyPressed++;
+  if (running === true && keyPressed === 1) {
+    if (!event.repeat) {
+      stopTimer();
+    }
   }
-
-  let max = Math.max(...newArr);
-  let min = Math.min(...newArr);
-  let index1 = newArr.indexOf(max);
-  newArr.splice(index1, 1);
-  let index2 = newArr.indexOf(min);
-  newArr.splice(index2, 1);
-
-  let sum = 0;
-  newArr.forEach((element) => {
-    sum += element;
-  });
-  return (sum / (number - 2)).toFixed();
-};
-
-var cstimerScrambler = (function () {
-  if (!window.Worker) {
-    // not available due to browser capability
-    return {};
+  if (event.code === "Space") {
+    if (running === false) {
+      timer.style.color = "green";
+    } else {
+      timer.style.color = "black";
+    }
   }
-  var worker = new Worker("cstimer.js");
-  var callbacks = {};
-  var msgid = 0;
-
-  worker.onmessage = function (e) {
-    //data: [msgid, type, ret]
-    var data = e.data;
-    var callback = callbacks[data[0]];
-    delete callbacks[data[0]];
-    callback && callback(data[2]);
-  };
-
-  //[type, length, state]
-  function getScramble(args, callback) {
-    ++msgid;
-    callbacks[msgid] = callback;
-    worker.postMessage([msgid, "scramble", args]);
-    return msgid;
+  if (event.altKey && event.code === "KeyZ") {
+    deleteLast();
+  } else if (event.altKey && event.code === "KeyD") {
+    resetTime();
   }
+}
 
-  return {
-    getScramble: getScramble,
-  };
-})();
+function handleSelectChange() {
+  switch (select.value) {
+    case "22":
+      type = ["222so"];
+      break;
+    case "33":
+      type = ["333"];
+      break;
+    case "44":
+      type = ["444wca"];
+      break;
+    case "55":
+      type = ["555wca", 60];
+      break;
+    case "66":
+      type = ["666wca", 60];
+      break;
+    case "77":
+      type = ["777wca", 60];
+      break;
+    case "mega":
+      type = ["mgmp", 70];
+      break;
+    case "pyra":
+      type = ["pyrso"];
+      break;
+  }
+  getScramble();
+  select.blur();
+}
 
 function startTimer() {
   table.classList.add("hide");
@@ -179,70 +145,20 @@ function stopTimer() {
   localStorage.setItem("timeArr", JSON.stringify(timeArr));
 }
 
-window.addEventListener("keydown", (event) => {
-  keyPressed++;
-  if (running === true && keyPressed === 1) {
-    if (!event.repeat) {
-      stopTimer();
-    }
-  }
-  if (event.code === "Space") {
-    if (running === false) {
-      timer.style.color = "green";
-    } else {
-      timer.style.color = "black";
-    }
-  }
-  if (event.altKey && event.code === "KeyZ") {
-    deleteLast();
-  } else if (event.altKey && event.code === "KeyD") {
-    resetTime();
-  }
-});
-
-window.addEventListener("keyup", (event) => {
-  timer.style.color = "black";
-  if (running === true) {
-    running = false;
-  } else if (event.code == "Space") {
-    startTimer();
-  }
-  keyPressed = 0;
-});
-
-window.addEventListener("touchstart", (event) => {
-  if (running === false) {
-    timer.style.color = "green";
-  } else {
-    timer.style.color = "black";
-    stopTimer();
-  }
-});
-
-window.addEventListener("touchend", (event) => {
-  timer.style.color = "black";
-  if (running === true) {
-    running = false;
-  } else {
-    startTimer();
-  }
-});
-
-const getScramble = () => {
-  cstimerScrambler.getScramble(type, (scramble) => {
-    let text = scramble.replaceAll("\\n", "<br>");
-    h1.innerHTML = text;
-  });
-};
-
-const resetTime = () => {
+function resetTime() {
   timeArr = [];
   numberOfSolves = 0;
   tbody.innerHTML = "";
   localStorage.clear();
-};
+}
 
-clearBtn.addEventListener("click", resetTime);
+function addTime(timeText) {
+  timeArr.unshift(timeText);
+  numberOfSolves++;
+  let current = tbody.innerHTML;
+  tbody.innerHTML = "";
+  tbody.innerHTML += milSecondsToString(timeText, numberOfSolves) + current;
+}
 
 function deleteLast() {
   deleteBtn.blur();
@@ -254,40 +170,112 @@ function deleteLast() {
   timeArr2.forEach((t) => addTime(t));
 }
 
-deleteBtn.addEventListener("click", deleteLast);
+function getTime() {
+  timeArr.forEach((t) => {
+    numberOfSolves++;
+    tbody.innerHTML += milSecondsToString(t, numberOfSolves);
+  });
+}
 
-select.addEventListener("change", () => {
-  switch (select.value) {
-    case "22":
-      type = ["222so"];
-      break;
-    case "33":
-      type = ["333"];
-      break;
-    case "44":
-      type = ["444wca"];
-      break;
-    case "55":
-      type = ["555wca", 60];
-      break;
-    case "66":
-      type = ["666wca", 60];
-      break;
-    case "77":
-      type = ["777wca", 60];
-      break;
-    case "mega":
-      type = ["mgmp", 70];
-      break;
-    case "pyra":
-      type = ["pyrso"];
-      break;
+function getAvg(arr, number) {
+  let newArr = [];
+  for (let i = 0; i < number; i++) {
+    newArr.push(arr[i]);
   }
-  getScramble();
-  select.blur();
-});
 
-const existingTimes = JSON.parse(localStorage.getItem("timeArr"));
-let timeData = existingTimes || [];
-timeData.forEach((t) => addTime(t));
-getScramble();
+  let max = Math.max(...newArr);
+  let min = Math.min(...newArr);
+  let index1 = newArr.indexOf(max);
+  newArr.splice(index1, 1);
+  let index2 = newArr.indexOf(min);
+  newArr.splice(index2, 1);
+
+  let sum = 0;
+  newArr.forEach((element) => {
+    sum += element;
+  });
+  return (sum / (number - 2)).toFixed();
+}
+
+function milSecondsToString(timeText, len) {
+  const times = milSecondsToArray(timeText);
+  const ao5 = milSecondsToArray(getAvg(timeArr, 5));
+  const ao12 = milSecondsToArray(getAvg(timeArr, 12));
+  if (len < 5) {
+    return `
+      <tr>
+        <td>${len}</td>
+        <td>${times[2]}${times[1]}.${times[0]}</td>
+        <td>-</td>
+        <td>-</td>
+      </tr>
+    `;
+  } else if (len < 12) {
+    return `
+      <tr>
+        <td>${len}</td>
+        <td>${times[2]}${times[1]}.${times[0]}</td>
+        <td>${ao5[2]}${ao5[1]}.${ao5[0]}</td>
+        <td>-</td>
+      </tr>
+    `;
+  } else {
+    return `
+      <tr>
+        <td>${len}</td>
+        <td>${times[2]}${times[1]}.${times[0]}</td>
+        <td>${ao5[2]}${ao5[1]}.${ao5[0]}</td>
+        <td>${ao12[2]}${ao12[1]}.${ao12[0]}</td>
+      </tr>
+    `;
+  }
+}
+
+function milSecondsToArray(input) {
+  let tableMilSec = input % 100;
+  let tableSec = Math.floor((input % 6000) / 100);
+  let tableMin = Math.floor(input / 6000);
+
+  let tableMilSecDisplay = tableMilSec < 10 ? "0" + tableMilSec : tableMilSec;
+  let tableSecDisplay =
+    tableMin > 0 && tableSec < 10 ? "0" + tableSec : tableSec;
+  let tableMinDisplay = tableMin > 0 ? tableMin + ":" : "";
+  return [tableMilSecDisplay, tableSecDisplay, tableMinDisplay];
+}
+
+var cstimerScrambler = (function () {
+  if (!window.Worker) {
+    // not available due to browser capability
+    return {};
+  }
+  var worker = new Worker("cstimer.js");
+  var callbacks = {};
+  var msgid = 0;
+
+  worker.onmessage = function (e) {
+    //data: [msgid, type, ret]
+    var data = e.data;
+    var callback = callbacks[data[0]];
+    delete callbacks[data[0]];
+    callback && callback(data[2]);
+  };
+
+  //[type, length, state]
+  function getScramble(args, callback) {
+    ++msgid;
+    callbacks[msgid] = callback;
+    worker.postMessage([msgid, "scramble", args]);
+    return msgid;
+  }
+
+  return {
+    getScramble: getScramble,
+  };
+})();
+
+function getScramble() {
+  cstimerScrambler.getScramble(type, (scramble) => {
+    let text = scramble.replaceAll("\\n", "<br>");
+    h1.innerHTML = text;
+  });
+}
