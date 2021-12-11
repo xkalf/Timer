@@ -22,7 +22,7 @@ function main() {
   const existingTimes = JSON.parse(localStorage.getItem("timeArr"));
   let timeData = existingTimes || [];
   timeData.forEach((t) => addTime(t));
-  // getScramble();
+  getScramble();
 
   window.addEventListener("keydown", handleKeyDown);
   window.addEventListener("keyup", handleKeyUp);
